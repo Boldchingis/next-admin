@@ -1,7 +1,8 @@
 "use client";
-
+import { useState } from "react";
 import * as React from "react";
-
+import { EditModal } from "./modalEdit";
+import { useEffect } from "react";
 import {
   Table,
   TableCell,
@@ -25,10 +26,22 @@ import { MoreHorizontal, Settings } from "lucide-react";
 
 export function UsersTable(props) {
   const { data } = props;
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [getItem, setGetItem] = useState();
+  const [searchName, setSearchName] = useState("");
+  const filteredItems = data.filter((el) =>
+    el.firstname.toLowerCase().includes(searchName.toLowerCase())
+  );
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
-        <Input placeholder="Нэрээр хайх..." className="max-w-sm" />
+        <Input
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          placeholder="Нэрээр хайх..."
+          className="max-w-sm"
+        />
       </div>
       <div className="border rounded-md">
         <Table>
@@ -45,7 +58,7 @@ export function UsersTable(props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {data?.slice(0, 10).map((item, index) => (
+            {filteredItems?.slice(0, 10).map((item, index) => (
               <TableRow key={item.id}>
                 <TableCell>{index + 1}</TableCell>
                 <TableHead>
@@ -69,20 +82,41 @@ export function UsersTable(props) {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem
                         onClick={() =>
-                          navigator.clipboard.writeText("temkanibno@gmail.com")
+                          navigator.clipboard.writeText(item.email)
                         }
                       >
                         Copy Email
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        variant="outline"
+                        onClick={() => {
+                          setEditModalOpen(true), setGetItem(item);
+                        }}
+                      >
+                        Edit
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={async () => {
+                          await fetch(`api/users/${item.id}`, {
+                            method: "DELETE",
+                          });
+                        }}
+                      >
+                        Delete
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableHead>
               </TableRow>
             ))}
           </TableBody>
+          <EditModal
+            open={editModalOpen}
+            onClose={setEditModalOpen}
+            item={getItem}
+          />
         </Table>
       </div>
     </div>

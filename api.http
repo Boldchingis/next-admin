@@ -16,7 +16,6 @@ content-type: application/json
 
 
 ### GET SINGLE DATA
-
 GET http://localhost:3000/api/users/${ID} HTTP/1.1
 content-type: application/json
 

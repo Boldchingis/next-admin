@@ -18,7 +18,7 @@ const Users = () => {
       .then((data) => {
         setData(data);
       });
-  }, []);
+  }, [data]);
 
   return (
     <div>

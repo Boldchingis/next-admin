@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -9,15 +10,16 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-export const UserCreateDialog = ({ open, onClose }) => {
+export function EditModal({ open, onClose, item }) {
+  const [editModal, setEditModal] = useState(false);
   const [firstname, setFirstName] = useState("");
   const [lastname, setLastName] = useState("");
   const [email, setEmail] = useState("");
-  const addUser = async () => {
-    await fetch("/api/users", {
-      method: "POST",
+  const editUser = async () => {
+    await fetch("/api/users/" + item.id, {
+      method: "PUT",
       body: JSON.stringify({
         firstname: firstname,
         lastname: lastname,
@@ -25,15 +27,19 @@ export const UserCreateDialog = ({ open, onClose }) => {
         imageUrl: "http://dummyimage.com/117x116.png/cc0000/ffffff",
       }),
     });
-
     onClose(false);
   };
+  useEffect(() => {
+    setFirstName(item?.firstname);
+    setLastName(item?.lastname);
+    setEmail(item?.email);
+  }, [item]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Create user</DialogTitle>
+          <DialogTitle>Edit user</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
@@ -44,6 +50,7 @@ export const UserCreateDialog = ({ open, onClose }) => {
               }}
               id="name"
               defaultValue=""
+              value={firstname}
             />
           </div>
           <div className="grid gap-2">
@@ -54,6 +61,7 @@ export const UserCreateDialog = ({ open, onClose }) => {
               }}
               id="username"
               defaultValue=""
+              value={lastname}
             />
           </div>
           <div className="grid gap-2">
@@ -64,6 +72,7 @@ export const UserCreateDialog = ({ open, onClose }) => {
               }}
               id="email"
               defaultValue=""
+              value={email}
             />
           </div>
         </div>
@@ -76,11 +85,11 @@ export const UserCreateDialog = ({ open, onClose }) => {
             Cancel
           </Button>
 
-          <Button onClick={addUser} type="submit">
+          <Button onClick={editUser} type="submit">
             Save
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   );
-};
+}
