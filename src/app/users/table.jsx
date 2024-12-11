@@ -23,6 +23,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MoreHorizontal, Settings } from "lucide-react";
+import Link from "next/link";
 
 export function UsersTable(props) {
   const { data } = props;
@@ -70,6 +71,10 @@ export function UsersTable(props) {
                 <TableHead>{item.firstname}</TableHead>
                 <TableHead>{item.lastname}</TableHead>
                 <TableHead>{item.email}</TableHead>
+                <Link href={`/users/${item.id}`}>
+                  <TableHead>Detail</TableHead>
+                </Link>
+
                 <TableHead className="w-1">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -78,6 +83,7 @@ export function UsersTable(props) {
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuItem
